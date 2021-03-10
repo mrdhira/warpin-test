@@ -1,0 +1,95 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:12.6-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - "postgres-data:/var/lib/postgresql/data"
+      - "./database/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    ports:
+      - "5432:5432"
+    networks:
+      - app-net
+
+  redis:
+    container_name: redis
+    image: redis:6.2.1-alpine
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes: 
+      - "redis-data:/redis/data"
+    ports:
+      - "6379:6379"
+    networks:
+      - app-net
+
+  users-services:
+    container_name: users-services
+    build:
+      context: .
+      dockerfile: Dockerfile.users
+      args:
+        buildno: 1
+    image: users-services
+    restart: always
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-net
+
+  products-services:
+    container_name: products-services
+    build:
+      context: .
+      dockerfile: Dockerfile.products
+      args:
+        buildno: 2
+    image: products-services
+    restart: always
+    ports:
+      - "8002:8002"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-net
+
+  orders-services:
+    container_name: orders-services
+    build:
+      context: .
+      dockerfile: Dockerfile.orders
+      args:
+        buildno: 3
+    image: orders-services
+    restart: always
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-net
+
+volumes:
+  postgres-data:
+    name: postgres-data
+    driver: local
+  redis-data:
+    name: redis-data
+    driver: local
+
+networks:
+  app-net:
+    name: app-net
+    driver: bridge

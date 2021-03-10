@@ -1,0 +1,46 @@
+usersServices:
+  database:
+    driver: "postgres"
+    # dsn: "host=localhost user=users_admin password=password123 port=5432 dbname=users_db sslmode=disable"
+    dsn: "host=postgres user=users_admin password=password123 port=5432 dbname=users_db sslmode=disable"
+    max_idle: 15
+    max_conn: 15
+  redis:
+    # address: "localhost:6379"
+    address: "redis:6379"
+    password: ""
+    db: 0
+
+productsServices:
+  database:
+    driver: "postgres"
+    # dsn: "host=localhost user=products_admin password=password123 port=5432 dbname=products_db sslmode=disable"
+    dsn: "host=postgres user=products_admin password=password123 port=5432 dbname=products_db sslmode=disable"
+    max_idle: 15
+    max_conn: 15
+  redis:
+    # address: "localhost:6379"
+    address: "redis:6379"
+    password: ""
+    db: 1
+
+ordersServices:
+  database:
+    driver: "postgres"
+    # dsn: "host=localhost user=orders_admin password=password123 port=5432 dbname=orders_db sslmode=disable"
+    dsn: "host=postgres user=orders_admin password=password123 port=5432 dbname=orders_db sslmode=disable"
+    max_idle: 15
+    max_conn: 15
+  redis:
+    # address: "localhost:6379"
+    address: "redis:6379"
+    password: ""
+    db: 2
+
+services:
+  users:
+    url: "http://users-services:8001"
+  products:
+    url: "http://products-services:8002"
+  orders:
+    url: "http://orders-services:8003"
